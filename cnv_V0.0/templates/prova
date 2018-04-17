@@ -1,0 +1,7 @@
+import random
+a=open('data2_azimifar_rewritten').readlines()
+
+compartments=['lysosome','golgi','peroxysome','cytoskeleton','nucleolus','xaxaxaxa']
+
+for line in a:
+	print line[:-1]+' '+random.sample(compartments,1)[0]

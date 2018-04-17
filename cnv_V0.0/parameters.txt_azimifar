@@ -1,0 +1,10 @@
+replicates=True
+sample1_columns=1-4
+sample2_columns=5-8
+toleratedNA=2
+annotation=automatic
+species=mmusculus
+idtype=uniprot
+inputfile=data2_azimifar_custom
+projectname=azimifar
+dolog2=True

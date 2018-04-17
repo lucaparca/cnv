@@ -1,0 +1,94 @@
+########################################################
+#                                                      #
+# Compartment Normalized Variation (CNV) Analysis Tool #
+#                                                      #
+#                   Version 0.0                        #
+#                                                      #
+########################################################
+
+################
+# Requirements #
+################
+
+The scripts are written in Python and R, which must be installed in the machine beforehand.
+Python version 2.6 (2.7 or newer version)
+R version 3.2.2
+
+Python libraries required: all libraries are built-in, no additional library required.
+R libraries required: 
+	ggplot2
+	GO.db
+	biomaRt
+	fdrtool
+	affy
+	preprocessCore
+	limma
+
+#############
+# Execution #
+#############
+
+R scripts are dynamically written and executed, their templates are stored in the templates/ folder for you to customize.
+The tool is launched with the following command line:
+python cnv.py
+
+The output file is named <projectname>_auto_cnv.txt (or custom for custom annotation).
+It contains the original input plus additional columns:
+	short.name: name of the protein
+	accession: accession ID used for GO term annotation
+	compartment: compartment assigned to the protein (proteins will multiple compartments (e.g. nucleus and mitochondrion) will appear as many times as the number of the assigned compartments).
+		The CNV value of the same protein will be different in every compartment.
+	residuals: the residual value, showing how much the protein abundance is deviating from the linear fit of its compartment.
+	cnv_value: the stardadized residual of a protein in its cellular compartment.
+	std_fdrtool.pval: the adjusted pvalue (with fdrtool) associated to the cnv_value.
+
+##########################################################
+# Detection of abundance shifts in cellular compartments #
+##########################################################
+
+Abundances shifts in particular compartments are automatically detected with a standard differential analysis with limma (nucleus, cytoplasm, mitochondrion, extracellular, peroxisome, lysosome, endoplasmic reticulum, Golgi apparatus, cell membrane and nuclear membrane)
+(done only if there are replicates and only with automatic compartment annotation).
+The following file will be created:
+
+<projectname>_compartments_shifts.pdf: a density plot showing the distribution of logFC of the proteins in the four main cellular compartments.
+<projectname>_compartment_shift_analysis.txt: a table reporting the mean logFC for every compartment, together with the t-test pvalue of a compartment versus the other compartments.
+
+##############
+# Parameters #
+##############
+
+Scripts are dynamic and can be adapted through a parameter file (parameters.txt) that should be checked before any analysis.
+The following parameters can be changed in the parameters.txt file:
+
+replicates: 'True' if your two samples contain 2 or more replicates each. 'False' otherwise.
+sample1_columns: Put the numbers of the columns containing the abundances for the two samples. 
+	The numbering must start from 0. 
+	Columns can be written like these following examples:
+		3 = the value is in the fourth column of the input data.
+		2:5 = the values for this sample are in the columns 3,4,5,6.
+		1,2 = the values for this sample are in the columns 2 and 3.
+sample2_columns: same as above.
+toleratedNA: Number of tolerated missing data (NA) for a protein in any of the two samples. If a protein has more NA than allowed it will be removed from the dataset. 
+	This parameter is checked only if replicates=True.
+annotation: 'automatic' if you want to script to automatically assign GO localization terms (nucleus, cytoplasm, mitochondrion and extracellular available at the moment) to the proteins in the dataset.
+	'custom' if protein compartments/groups are provided by the user. In this care, the column with the annotation in the input data MUST be named 'annotation'.
+species: scientific name of the organism. Species name MUST be written like the following examples:
+	'mmusculus' for Mus musculus;
+	'hsapiens' for Homo sapiens;
+	'scerevisiae' for S.cerevisiae...
+idtype: type of protein ID provided in the input data. This script can work with UniProt and Ensembl ID at the momend.
+	Put 'uniprot' or 'ensembl' as value, accordingly.
+inputfile: name of the input file (or path if it is in a different directory).
+projectname: to be used when naming the output files.
+
+###############
+# PLEASE READ #
+###############
+
+1. Column names MUST be provided.
+2. Columns numbering starts from 0.
+3. Missing data SHOULD be set to NA (value is ignored if not numeric).
+4. The column with the Protein ID MUST be column 0.
+5. Multiple IDs for the same proteins must be separated by a ';' character.
+6. Annotation column MUST be named 'annotation'.
+7. Use TAB- or space-delimited columns.

@@ -1,0 +1,10 @@
+replicates=False
+sample1_columns=1
+sample2_columns=2
+toleratedNA=2
+annotation=custom
+species=hsapiens
+idtype=uniprot
+inputfile=data2_tiannan_custom
+projectname=tiannan
+dolog2=False
