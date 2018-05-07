@@ -79,12 +79,12 @@ theme(axis.text=element_text(size=7),
       panel.grid=element_blank())
 dev.off()
 pdf('output_compartment_shifts_boxplot.pdf')
-ggplot(dataset_all, aes(x=logFC, fill=as.factor(cond))) + geom_boxplot() + theme_bw() + scale_fill_manual(values=c("#4900FF", "#FB7706", "#53FF05", "#15A9FE", "#DF04FF", "#22FFAB", "#E3FF09", "#22FF24", "#FB0007", "#0001FF"))  + theme(legend.justification=c(0,1), legend.position=c(0, 1), legend.background = element_rect()) + theme(panel.grid.minor = element_line(colour = NA))+
-theme(axis.text=element_text(size=7),
-      axis.title=element_text(face = "bold",size=7),
-      plot.title=element_text(size=7),
-      panel.background=element_rect(fill='white',color='black'),
-      panel.grid=element_blank())
+ggplot(dataset_all, aes(factor(cond),logFC, fill=as.factor(cond))) +
+      geom_boxplot() +
+      geom_hline(yintercept=0,color='red',linetype='dashed') +
+      scale_fill_manual(values=c("#4900FF", "#FB7706", "#53FF05", "#15A9FE", "#DF04FF", "#22FFAB", "#E3FF09", "#22FF24", "#FB0007", "#0001FF"))+
+      theme_bw()+
+      theme(axis.title.x=element_blank(),axis.text.x=element_blank(),axis.ticks.x=element_blank())
 dev.off()
 
 p1=t.test(z1,c(z2,z3,z4,z5,z6,z7,z8,z9,z10))$p.value

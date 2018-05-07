@@ -35,14 +35,22 @@ compartment_names=c('Nucleus','Cytoplasm','Extracellular','Mitochondrion','Perox
 out_table=c()
 for (i in 1:length(compartment_names)){
   selected_proteins=which(a$accession %in% subset(t,go_id %in% unlist(compartments[i]))$uniprotswissprot)
-  if (length(selected_proteins)<20) {next}
   grep_data=a[selected_proteins,]
   grep_data$compartment=compartment_names[i]
   lin_regr=lm(grep_data$sample2_abundance~grep_data$sample1_abundance)
+  
+  if (length(selected_proteins)<20) {
+    grep_data$residuals='NA'
+    grep_data$cnv_value='NA'
+    grep_data$cnv_fdrtool.pval='NA'
+    grep_data$cnv_fdrtool.qval='NA'
+  } else {
   grep_data$residuals=lin_regr$residuals
   grep_data$cnv_value=rstandard(lin_regr)
   grep_data$cnv_fdrtool.pval=fdrtool(grep_data$cnv_value,plot=FALSE)$pval
   grep_data$cnv_fdrtool.qval=fdrtool(grep_data$cnv_value,plot=FALSE)$qval
+  }
   out_table=rbind(out_table,grep_data)
+
 }
 write.table(out_table,'output_auto_cnv.txt',sep='\t',quote=FALSE,row.names=FALSE)
